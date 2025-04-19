@@ -10,6 +10,13 @@ export type Message = {
   timestamp: Date;
 };
 
+type ChatMessageResponse = {
+  id: string;
+  text: string;
+  sender: 'user' | 'bot';
+  timestamp: string;
+};
+
 export const useChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +50,10 @@ export const useChat = () => {
   const loadMessages = async () => {
     try {
       // Use a more generic approach to query the table
-      const { data, error } = await supabase.rpc('get_chat_messages');
+      const { data, error } = await supabase.rpc('get_chat_messages') as {
+        data: ChatMessageResponse[] | null;
+        error: Error | null;
+      };
 
       if (error) {
         console.error('Error loading messages:', error);
@@ -55,9 +65,9 @@ export const useChat = () => {
         const transformedMessages = data.map(msg => ({
           id: msg.id,
           text: msg.text,
-          sender: msg.sender,
+          sender: msg.sender as 'user' | 'bot',
           timestamp: new Date(msg.timestamp)
-        })) as Message[];
+        }));
 
         setMessages(transformedMessages);
       }
