@@ -50,10 +50,13 @@ export const useChat = () => {
   const loadMessages = async () => {
     try {
       // Use a more generic approach to query the table
-      const { data, error } = await supabase.rpc('get_chat_messages') as {
-        data: ChatMessageResponse[] | null;
-        error: Error | null;
-      };
+      const { data, error } = await supabase
+        .from('chat_messages')
+        .select('*')
+        .order('timestamp', { ascending: true }) as {
+          data: ChatMessageResponse[] | null;
+          error: Error | null;
+        };
 
       if (error) {
         console.error('Error loading messages:', error);
