@@ -13,7 +13,7 @@ export type Message = {
 type ChatMessageResponse = {
   id: string;
   text: string;
-  sender: 'user' | 'bot';
+  sender: string;
   timestamp: string;
 };
 
