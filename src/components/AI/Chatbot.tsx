@@ -1,16 +1,35 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Send, User, Bot, Loader } from 'lucide-react';
 import { useChat } from '@/hooks/use-chat';
+import { useToast } from '@/hooks/use-toast';
 
 const Chatbot = () => {
   const { messages, isLoading, sendMessage } = useChat();
   const [inputMessage, setInputMessage] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
+
+  // Scroll to bottom when messages update
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const handleSendMessage = () => {
     if (inputMessage.trim() === '') return;
+    
     sendMessage(inputMessage);
     setInputMessage('');
+    
+    toast({
+      title: "Message sent",
+      description: "Your message is being processed by the AI assistant.",
+      duration: 2000,
+    });
   };
 
   return (
@@ -72,6 +91,7 @@ const Chatbot = () => {
             </div>
           </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
       
       <div className="p-3 border-t border-border/30">

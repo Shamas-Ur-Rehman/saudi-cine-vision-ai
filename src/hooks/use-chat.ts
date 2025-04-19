@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { v4 as uuidv4 } from 'uuid';
 
 export type Message = {
   id: string;
@@ -28,7 +29,7 @@ export const useChat = () => {
           table: 'chat_messages'
         },
         (payload) => {
-          const newMessage = payload.new as Message;
+          const newMessage = payload.new as unknown as Message;
           setMessages(prev => [...prev, newMessage]);
         }
       )
@@ -40,6 +41,8 @@ export const useChat = () => {
   }, []);
 
   const loadMessages = async () => {
+    // Use `from` without type constraints to avoid TypeScript errors
+    // Cast the result to the correct type
     const { data, error } = await supabase
       .from('chat_messages')
       .select('*')
@@ -50,11 +53,30 @@ export const useChat = () => {
       return;
     }
 
-    setMessages(data);
+    // Transform the data to match our Message type
+    const transformedMessages = data.map(msg => ({
+      id: msg.id,
+      text: msg.text,
+      sender: msg.sender,
+      timestamp: new Date(msg.timestamp)
+    })) as Message[];
+
+    setMessages(transformedMessages);
   };
 
   const sendMessage = async (text: string) => {
     setIsLoading(true);
+    
+    // Add user message to UI immediately
+    const userMessage: Message = {
+      id: uuidv4(),
+      text,
+      sender: 'user',
+      timestamp: new Date()
+    };
+    
+    setMessages(prevMessages => [...prevMessages, userMessage]);
+    
     try {
       const response = await fetch('/api/ai-chat', {
         method: 'POST',
@@ -66,7 +88,7 @@ export const useChat = () => {
         throw new Error('Failed to send message');
       }
 
-      // The messages will be updated through the subscription
+      // The bot message will be added through the subscription
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {

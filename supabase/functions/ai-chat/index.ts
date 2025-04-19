@@ -21,23 +21,29 @@ serve(async (req) => {
 
   try {
     const { message } = await req.json();
+    console.log("Received message:", message);
 
     // Get relevant production data from Supabase
-    const { data: scenes } = await supabase
+    const { data: scenes, error: scenesError } = await supabase
       .from('scenes')
       .select('*, crew_members!scene_crew(name, role)');
     
-    const { data: crewMembers } = await supabase
+    if (scenesError) console.error("Error fetching scenes:", scenesError);
+    
+    const { data: crewMembers, error: crewError } = await supabase
       .from('crew_members')
       .select('*');
+    
+    if (crewError) console.error("Error fetching crew members:", crewError);
 
     // Create context from production data
     const context = `
       Current production state:
-      Scenes: ${JSON.stringify(scenes)}
-      Crew: ${JSON.stringify(crewMembers)}
+      Scenes: ${JSON.stringify(scenes || [])}
+      Crew: ${JSON.stringify(crewMembers || [])}
     `;
 
+    console.log("Sending request to OpenAI...");
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -45,7 +51,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -56,14 +62,26 @@ serve(async (req) => {
       }),
     });
 
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("OpenAI API error:", errorText);
+      throw new Error(`OpenAI API error: ${response.status} ${errorText}`);
+    }
+
     const aiResponse = await response.json();
     const aiMessage = aiResponse.choices[0].message.content;
+    console.log("Received AI response:", aiMessage);
 
     // Store the conversation in the database
-    await supabase.from('chat_messages').insert([
-      { text: message, sender: 'user' },
+    const { error: insertUserError } = await supabase.from('chat_messages').insert([
+      { text: message, sender: 'user' }
+    ]);
+    if (insertUserError) console.error("Error inserting user message:", insertUserError);
+    
+    const { error: insertBotError } = await supabase.from('chat_messages').insert([
       { text: aiMessage, sender: 'bot' }
     ]);
+    if (insertBotError) console.error("Error inserting bot message:", insertBotError);
 
     return new Response(JSON.stringify({ response: aiMessage }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
