@@ -6,6 +6,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import SceneVisualization from "./pages/SceneVisualization";
+import Scripts from "./pages/Scripts";
+import Schedule from "./pages/Schedule";
+import Crew from "./pages/Crew";
+import AIAssistant from "./pages/AIAssistant";
+import Analytics from "./pages/Analytics";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +24,13 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/visualization" element={<SceneVisualization />} />
+          <Route path="/scripts" element={<Scripts />} />
+          <Route path="/schedule" element={<Schedule />} />
+          <Route path="/crew" element={<Crew />} />
+          <Route path="/ai-assistant" element={<AIAssistant />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
