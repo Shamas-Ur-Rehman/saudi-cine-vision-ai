@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Camera, Loader, Refresh, Upload } from 'lucide-react';
+import { Camera, Loader, RefreshCw, Upload } from 'lucide-react';
 
 const SceneVisualizer = () => {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -110,7 +110,7 @@ const SceneVisualizer = () => {
                         className="text-white bg-card/30 p-1 rounded-full hover:bg-card/50 transition"
                         onClick={() => setGeneratedImage(null)}
                       >
-                        <Refresh size={16} />
+                        <RefreshCw size={16} />
                       </button>
                     </div>
                   </div>
