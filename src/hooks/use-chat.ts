@@ -49,11 +49,11 @@ export const useChat = () => {
 
   const loadMessages = async () => {
     try {
-      // Use a more generic approach to query the table
+      // Use a type assertion to bypass the TypeScript error
       const { data, error } = await supabase
         .from('chat_messages')
         .select('*')
-        .order('timestamp', { ascending: true }) as {
+        .order('timestamp', { ascending: true }) as unknown as {
           data: ChatMessageResponse[] | null;
           error: Error | null;
         };
