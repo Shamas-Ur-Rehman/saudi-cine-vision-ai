@@ -9,6 +9,40 @@ type Message = {
   timestamp: Date;
 };
 
+// Mock production data
+const productionData = {
+  actors: {
+    'Remas': { currentScene: 'Desert Chase Scene', nextScene: 'Market Scene', schedule: '10:30 AM' },
+    'Dana': { currentScene: 'Market Scene', nextScene: 'Palace Interior', schedule: '2:00 PM' },
+    'Hager': { currentScene: 'Palace Interior', nextScene: 'Final Scene', schedule: '3:30 PM' },
+    'Ahmad': { currentScene: 'Desert Chase Scene', nextScene: 'Market Scene', schedule: '10:30 AM' },
+    'Mohammed': { currentScene: 'Market Scene', nextScene: 'Final Scene', schedule: '2:00 PM' }
+  },
+  scenes: {
+    'Desert Chase Scene': {
+      location: 'Al Qudra Desert',
+      time: '10:30 AM',
+      status: 'In Progress',
+      responsiblePerson: 'Ahmad',
+      actors: ['Remas', 'Ahmad']
+    },
+    'Market Scene': {
+      location: 'Old Dubai Market Set',
+      time: '2:00 PM',
+      status: 'Pending',
+      responsiblePerson: 'Mohammed',
+      actors: ['Dana', 'Mohammed']
+    },
+    'Palace Interior': {
+      location: 'Studio B',
+      time: '3:30 PM',
+      status: 'Pending',
+      responsiblePerson: 'Hager',
+      actors: ['Hager']
+    }
+  }
+};
+
 const Chatbot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -20,6 +54,52 @@ const Chatbot = () => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const generateResponse = (message: string): string => {
+    const lowerMessage = message.toLowerCase();
+    
+    // Next shoot query
+    if (lowerMessage.includes('next shoot') || lowerMessage.includes('next scene')) {
+      return "The next shoot is the Desert Chase Scene at Al Qudra Desert at 10:30 AM with Remas and Ahmad.";
+    }
+    
+    // Scene status query
+    if (lowerMessage.includes('scene status') || lowerMessage.includes('scenes left')) {
+      return "Today's remaining scenes:\n1. Market Scene (2:00 PM) - Pending\n2. Palace Interior (3:30 PM) - Pending\nDesert Chase Scene is currently in progress.";
+    }
+    
+    // Actor responsibility query
+    if (lowerMessage.includes('responsible') || lowerMessage.includes('who is in charge')) {
+      if (lowerMessage.includes('desert')) return "Ahmad is responsible for the Desert Chase Scene";
+      if (lowerMessage.includes('market')) return "Mohammed is responsible for the Market Scene";
+      if (lowerMessage.includes('palace')) return "Hager is responsible for the Palace Interior Scene";
+      return "Please specify which scene you're asking about.";
+    }
+    
+    // Location query
+    if (lowerMessage.includes('location') || lowerMessage.includes('where')) {
+      if (lowerMessage.includes('next')) return "The next shooting location is Al Qudra Desert for the Desert Chase Scene";
+      return "Today's locations:\n- Al Qudra Desert (Desert Chase Scene)\n- Old Dubai Market Set (Market Scene)\n- Studio B (Palace Interior)";
+    }
+    
+    // Schedule query
+    if (lowerMessage.includes('schedule') || lowerMessage.includes('timing')) {
+      return "Today's Schedule:\n10:30 AM - Desert Chase Scene (Remas, Ahmad)\n2:00 PM - Market Scene (Dana, Mohammed)\n3:30 PM - Palace Interior (Hager)";
+    }
+    
+    // Actor query
+    if (lowerMessage.includes('actor') || productionData.actors[message.trim()]) {
+      const actorName = Object.keys(productionData.actors).find(name => 
+        lowerMessage.includes(name.toLowerCase())
+      );
+      if (actorName) {
+        const actor = productionData.actors[actorName];
+        return `${actorName} is currently assigned to ${actor.currentScene} at ${actor.schedule}. Their next scene will be ${actor.nextScene}.`;
+      }
+    }
+
+    return "I can help you with:\n- Next shoot details\n- Scene status\n- Scene responsibilities\n- Shooting locations\n- Actor schedules\nPlease ask me about any of these topics!";
+  };
 
   const handleSendMessage = () => {
     if (inputMessage.trim() === '') return;
@@ -35,20 +115,10 @@ const Chatbot = () => {
     setInputMessage('');
     setIsLoading(true);
 
-    // Mock AI response - in a real app, this would call an AI API
+    // Simulate AI response time
     setTimeout(() => {
-      let responseText = '';
+      const responseText = generateResponse(inputMessage);
       
-      if (inputMessage.toLowerCase().includes('next shoot') || inputMessage.toLowerCase().includes('shooting')) {
-        responseText = "Your next shoot is scheduled for today at 10:30 AM - Desert Chase Scene at Al Qudra Desert. 12 crew members are expected to attend. Would you like me to send you the detailed shot list?";
-      } else if (inputMessage.toLowerCase().includes('script') || inputMessage.toLowerCase().includes('scene')) {
-        responseText = "I found 4 scripts in the system. The most recently updated is 'Desert Chase Scene' (Scene 12), last modified 2 hours ago. Would you like me to send you the script or suggest some optimizations based on AI analysis?";
-      } else if (inputMessage.toLowerCase().includes('schedule') || inputMessage.toLowerCase().includes('timing')) {
-        responseText = "Today you have 3 scheduled events: Market Scene Setup (8:00 AM), Desert Chase Scene Filming (10:30 AM), and Actor Rehearsal (3:30 PM). Would you like to add a new event or modify an existing one?";
-      } else {
-        responseText = "I'm here to help with your production needs. You can ask me about shooting schedules, scene status, scripts, or crew coordination. How else can I assist you?";
-      }
-
       const newBotMessage: Message = {
         id: messages.length + 2,
         text: responseText,
@@ -56,9 +126,9 @@ const Chatbot = () => {
         timestamp: new Date()
       };
 
-      setMessages((prevMessages) => [...prevMessages, newBotMessage]);
+      setMessages(prevMessages => [...prevMessages, newBotMessage]);
       setIsLoading(false);
-    }, 1500);
+    }, 1000);
   };
 
   return (
