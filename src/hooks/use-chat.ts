@@ -41,27 +41,28 @@ export const useChat = () => {
   }, []);
 
   const loadMessages = async () => {
-    // Explicitly cast with `as any` to bypass TypeScript errors since the table might not be in the types
-    const { data, error } = await (supabase
-      .from('chat_messages' as any)
-      .select('*')
-      .order('timestamp', { ascending: true }) as any);
+    try {
+      // Use a more generic approach to query the table
+      const { data, error } = await supabase.rpc('get_chat_messages');
 
-    if (error) {
-      console.error('Error loading messages:', error);
-      return;
-    }
+      if (error) {
+        console.error('Error loading messages:', error);
+        return;
+      }
 
-    if (data) {
-      // Transform the data to match our Message type
-      const transformedMessages = data.map(msg => ({
-        id: msg.id,
-        text: msg.text,
-        sender: msg.sender,
-        timestamp: new Date(msg.timestamp)
-      })) as Message[];
+      if (data) {
+        // Transform the data to match our Message type
+        const transformedMessages = data.map(msg => ({
+          id: msg.id,
+          text: msg.text,
+          sender: msg.sender,
+          timestamp: new Date(msg.timestamp)
+        })) as Message[];
 
-      setMessages(transformedMessages);
+        setMessages(transformedMessages);
+      }
+    } catch (err) {
+      console.error('Failed to load messages:', err);
     }
   };
 

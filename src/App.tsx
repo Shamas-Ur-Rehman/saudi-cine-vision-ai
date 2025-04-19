@@ -14,7 +14,15 @@ import AIAssistant from "./pages/AIAssistant";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 
-const queryClient = new QueryClient();
+// Create a new QueryClient instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60000, // 1 minute
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
