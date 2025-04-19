@@ -32,8 +32,13 @@ export const useChat = () => {
           table: 'chat_messages'
         },
         (payload) => {
-          const newMessage = payload.new as Message;
-          setMessages(prev => [...prev, newMessage]);
+          const newMessage = payload.new as ChatMessageResponse;
+          setMessages(prev => [...prev, {
+            id: newMessage.id,
+            text: newMessage.text,
+            sender: newMessage.sender as 'user' | 'bot',
+            timestamp: new Date(newMessage.timestamp)
+          }]);
         }
       )
       .subscribe();
@@ -85,22 +90,29 @@ export const useChat = () => {
     setMessages(prevMessages => [...prevMessages, userMessage]);
     
     try {
+      // Get authentication token from Supabase
+      const { data: { session } } = await supabase.auth.getSession();
+      
       // Use the Supabase edge function URL
       const response = await fetch('https://agqixwckqnvbdiqfdgii.supabase.co/functions/v1/ai-chat', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          // Use the anon key instead of trying to get an auth token
+          'Authorization': `Bearer ${session?.access_token || ''}`,
           'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFncWl4d2NrcW52YmRpcWZkZ2lpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUwNTQ4NTEsImV4cCI6MjA2MDYzMDg1MX0.C-lw4Uggv3EAsWvguL6uXkQMnmi7tXO0-bed3zfU2d4'
         },
         body: JSON.stringify({ message: text }),
       });
 
       if (!response.ok) {
+        const errorData = await response.text();
+        console.error('API response error:', errorData);
         throw new Error('Failed to send message');
       }
 
       // The bot message will be added through the subscription
+      const data = await response.json();
+      console.log('Edge function response:', data);
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {
