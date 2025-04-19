@@ -1,7 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
+import type { Database } from '@/integrations/supabase/types';
 
 export type Message = {
   id: string;
@@ -10,12 +10,7 @@ export type Message = {
   timestamp: Date;
 };
 
-type ChatMessageResponse = {
-  id: string;
-  text: string;
-  sender: string;
-  timestamp: string;
-};
+type ChatMessageResponse = Database['public']['Tables']['chat_messages']['Row'];
 
 export const useChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -36,7 +31,7 @@ export const useChat = () => {
           table: 'chat_messages'
         },
         (payload) => {
-          const newMessage = payload.new as unknown as Message;
+          const newMessage = payload.new as Message;
           setMessages(prev => [...prev, newMessage]);
         }
       )
@@ -49,14 +44,10 @@ export const useChat = () => {
 
   const loadMessages = async () => {
     try {
-      // Use a type assertion to bypass the TypeScript error
       const { data, error } = await supabase
         .from('chat_messages')
-        .select('*')
-        .order('timestamp', { ascending: true }) as unknown as {
-          data: ChatMessageResponse[] | null;
-          error: Error | null;
-        };
+        .select()
+        .order('timestamp', { ascending: true });
 
       if (error) {
         console.error('Error loading messages:', error);
