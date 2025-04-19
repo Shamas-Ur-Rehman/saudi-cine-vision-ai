@@ -4,6 +4,7 @@ import { FileText, Download, Search, User, Clock, Edit2, FilePlus, X } from 'luc
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import CreateScriptForm, { ScriptFormData } from './CreateScriptForm';
 import { toast } from '@/hooks/use-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Script {
   id: number;
@@ -18,6 +19,9 @@ interface Script {
 const ScriptManager = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [editingScriptId, setEditingScriptId] = useState<number | null>(null);
+  const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
+  
   // Mock script data
   const [scripts, setScripts] = useState<Script[]>([
     {
@@ -88,19 +92,59 @@ const ScriptManager = () => {
   const handleDownload = (id: number) => {
     const script = scripts.find(script => script.id === id);
     if (script) {
+      // Create a simple text representation of the script
+      const scriptContent = `
+Title: ${script.title}
+Scene Number: ${script.sceneNumber}
+Assigned To: ${script.assignedTo}
+Status: ${script.status}
+Last Updated: ${script.lastUpdated}
+
+Description:
+${script.description || 'No description provided.'}
+      `;
+      
+      // Create a blob and download it
+      const blob = new Blob([scriptContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${script.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
       toast({
         title: 'Script Downloaded',
-        description: `"${script.title}" has been downloaded.`
+        description: `"${script.title}" has been downloaded as a text file.`
       });
     }
   };
 
-  const handleEdit = (id: number) => {
-    const script = scripts.find(script => script.id === id);
-    if (script) {
+  const handleEditStatus = (id: number) => {
+    setEditingScriptId(id);
+    setIsStatusDialogOpen(true);
+  };
+
+  const handleStatusChange = (status: string) => {
+    if (editingScriptId !== null) {
+      const updatedScripts = scripts.map(script => {
+        if (script.id === editingScriptId) {
+          return { ...script, status, lastUpdated: 'Just now' };
+        }
+        return script;
+      });
+      
+      const scriptTitle = scripts.find(s => s.id === editingScriptId)?.title;
+      
+      setScripts(updatedScripts);
+      setIsStatusDialogOpen(false);
+      setEditingScriptId(null);
+      
       toast({
-        title: 'Edit Mode',
-        description: `Now editing "${script.title}". Feature coming soon.`
+        title: 'Status Updated',
+        description: `"${scriptTitle}" status changed to ${status}.`
       });
     }
   };
@@ -184,18 +228,21 @@ const ScriptManager = () => {
                     <button 
                       className="p-1 rounded hover:bg-muted transition"
                       onClick={() => handleDownload(script.id)}
+                      title="Download Script"
                     >
                       <Download size={16} className="text-muted-foreground" />
                     </button>
                     <button 
                       className="p-1 rounded hover:bg-muted transition"
-                      onClick={() => handleEdit(script.id)}
+                      onClick={() => handleEditStatus(script.id)}
+                      title="Edit Status"
                     >
                       <Edit2 size={16} className="text-muted-foreground" />
                     </button>
                     <button 
                       className="p-1 rounded hover:bg-muted transition"
                       onClick={() => handleDeleteScript(script.id)}
+                      title="Delete Script"
                     >
                       <X size={16} className="text-muted-foreground text-red-500" />
                     </button>
@@ -231,6 +278,30 @@ const ScriptManager = () => {
             onSubmit={handleCreateScript} 
             onClose={() => setIsDialogOpen(false)}
           />
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Status Dialog */}
+      <Dialog open={isStatusDialogOpen} onOpenChange={setIsStatusDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Update Script Status</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Select onValueChange={handleStatusChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select new status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Draft">Draft</SelectItem>
+                  <SelectItem value="In Review">In Review</SelectItem>
+                  <SelectItem value="Needs Revisions">Needs Revisions</SelectItem>
+                  <SelectItem value="Approved">Approved</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
