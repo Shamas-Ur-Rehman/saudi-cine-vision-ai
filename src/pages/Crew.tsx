@@ -2,8 +2,14 @@
 import React, { useState } from 'react';
 import AppLayout from '../components/Layout/AppLayout';
 import { Users, Search, UserPlus, Mail, Phone } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useForm } from 'react-hook-form';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 interface CrewMember {
   id: number;
@@ -14,11 +20,18 @@ interface CrewMember {
   status: 'Active' | 'On Leave' | 'Unavailable';
 }
 
+interface AddMemberForm {
+  name: string;
+  role: string;
+  email: string;
+  phone: string;
+}
+
 const Crew = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const form = useForm<AddMemberForm>();
   
-  // Mock crew data with Saudi names
   const [crewMembers, setCrewMembers] = useState<CrewMember[]>([
     {
       id: 1,
@@ -75,12 +88,44 @@ const Crew = () => {
     }
   };
 
+  const handleAddMember = (data: AddMemberForm) => {
+    const newMember: CrewMember = {
+      id: crewMembers.length + 1,
+      ...data,
+      status: 'Active'
+    };
+
+    setCrewMembers([...crewMembers, newMember]);
+    setIsDialogOpen(false);
+    form.reset();
+    
+    toast({
+      title: "Success",
+      description: "New crew member has been added successfully.",
+    });
+  };
+
+  const handleStatusChange = (memberId: number, newStatus: CrewMember['status']) => {
+    setCrewMembers(members => 
+      members.map(member => 
+        member.id === memberId ? { ...member, status: newStatus } : member
+      )
+    );
+
+    toast({
+      title: "Status Updated",
+      description: "Crew member status has been updated successfully.",
+    });
+  };
+
   const filteredCrew = crewMembers.filter(member => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
       member.name.toLowerCase().includes(query) ||
-      member.role.toLowerCase().includes(query)
+      member.role.toLowerCase().includes(query) ||
+      member.email.toLowerCase().includes(query) ||
+      member.phone.toLowerCase().includes(query)
     );
   });
 
@@ -102,18 +147,70 @@ const Crew = () => {
                 <h3 className="font-semibold">Crew Directory</h3>
                 <p className="text-sm text-muted-foreground">Manage your production team members</p>
               </div>
-              <button 
-                onClick={() => {
-                  toast({
-                    title: "Coming Soon",
-                    description: "The ability to add new crew members will be available soon.",
-                  });
-                }}
-                className="flex items-center gap-2 bg-cinema-highlight text-white px-4 py-2 rounded-md hover:bg-cinema-highlight/80 transition"
-              >
-                <UserPlus size={16} />
-                <span>Add Member</span>
-              </button>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="flex items-center gap-2 bg-cinema-highlight hover:bg-cinema-highlight/80">
+                    <UserPlus size={16} />
+                    <span>Add Member</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add New Crew Member</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={form.handleSubmit(handleAddMember)} className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter name" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="role"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Role</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter role" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter email" type="email" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Phone</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter phone number" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" className="w-full">Add Member</Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
 
@@ -122,7 +219,7 @@ const Crew = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <input
                 type="text"
-                placeholder="Search crew members by name or role..."
+                placeholder="Search crew members by name, role, email, or phone..."
                 className="w-full pl-9 rounded-md border border-input bg-transparent px-3 py-2 text-sm"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -153,9 +250,24 @@ const Crew = () => {
                       </div>
                     </div>
                   </div>
-                  <span className={`text-xs px-2 py-0.5 rounded-full border ${getStatusColor(member.status)}`}>
-                    {member.status}
-                  </span>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className={`text-xs px-2 py-0.5 rounded-full border ${getStatusColor(member.status)}`}>
+                        {member.status}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem onClick={() => handleStatusChange(member.id, 'Active')}>
+                        Set as Active
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleStatusChange(member.id, 'On Leave')}>
+                        Set as On Leave
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleStatusChange(member.id, 'Unavailable')}>
+                        Set as Unavailable
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             ))}
@@ -167,3 +279,4 @@ const Crew = () => {
 };
 
 export default Crew;
+
