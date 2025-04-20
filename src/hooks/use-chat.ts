@@ -93,15 +93,23 @@ export const useChat = () => {
     setMessages(prevMessages => [...prevMessages, userMessage]);
     
     try {
-      // Get authentication token from Supabase
+      // Get current session token - this is critical for authentication
       const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+      
+      if (!accessToken) {
+        console.error('No access token available - user may not be authenticated');
+        throw new Error('Authentication required');
+      }
+      
+      console.log('Sending message to edge function with auth token');
       
       // Use the Supabase edge function URL
       const response = await fetch('https://agqixwckqnvbdiqfdgii.supabase.co/functions/v1/ai-chat', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session?.access_token || ''}`,
+          'Authorization': `Bearer ${accessToken}`,
           'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFncWl4d2NrcW52YmRpcWZkZ2lpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDUwNTQ4NTEsImV4cCI6MjA2MDYzMDg1MX0.C-lw4Uggv3EAsWvguL6uXkQMnmi7tXO0-bed3zfU2d4'
         },
         body: JSON.stringify({ message: text }),
@@ -119,20 +127,26 @@ export const useChat = () => {
       // If we don't see the bot message added by the subscription within a reasonable time,
       // add it manually to ensure user sees a response
       setTimeout(() => {
-        const botMessageExists = messages.some(
-          msg => msg.sender === 'bot' && msg.text === data.response
-        );
-        
-        if (!botMessageExists && data.response) {
-          const botMessage: Message = {
-            id: uuidv4(),
-            text: data.response,
-            sender: 'bot',
-            timestamp: new Date()
-          };
-          setMessages(prev => [...prev, botMessage]);
-        }
-      }, 2000);
+        setMessages(prev => {
+          // Check if the bot message already exists in our messages
+          const botMessageExists = prev.some(
+            msg => msg.sender === 'bot' && msg.text === data.response
+          );
+          
+          // If the bot message doesn't exist and we have a response, add it
+          if (!botMessageExists && data.response) {
+            const botMessage: Message = {
+              id: uuidv4(),
+              text: data.response,
+              sender: 'bot',
+              timestamp: new Date()
+            };
+            return [...prev, botMessage];
+          }
+          
+          return prev;
+        });
+      }, 1000);
       
     } catch (error) {
       console.error('Error sending message:', error);
