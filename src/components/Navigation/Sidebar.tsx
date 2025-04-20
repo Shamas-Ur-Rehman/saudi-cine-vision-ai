@@ -7,14 +7,14 @@ const Sidebar = () => {
   const location = useLocation();
   
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-sidebar via-sidebar to-cinema-highlight/10 text-sidebar-foreground">
-      {/* Logo Section */}
-      <div className="flex items-center justify-center h-16 border-b border-cinema-highlight/30 bg-cinema-highlight/5">
-        <Link to="/" className="flex items-center gap-3 px-3 animate-float">
+    <div className="h-full flex flex-col bg-sidebar text-sidebar-foreground">
+      {/* Logo Section - Made bigger */}
+      <div className="flex items-center justify-center h-20 border-b border-sidebar-border bg-sidebar-accent/5">
+        <Link to="/" className="flex items-center gap-3 px-3">
           <img 
             src="/lovable-uploads/4ee004ca-ef74-4593-9461-0696910937a6.png"
             alt="SACB Logo"
-            className="h-8 w-auto transition-transform hover:scale-105"
+            className="h-12 w-auto transition-transform"
           />
         </Link>
       </div>
@@ -46,8 +46,8 @@ const Sidebar = () => {
 
       {/* Pro Feature Teaser */}
       <div className="p-4">
-        <div className="p-3 rounded-lg bg-gradient-to-br from-cinema-purple/20 to-cinema-highlight/20 backdrop-blur-sm border border-cinema-highlight/30 transition-all duration-300 hover:shadow-lg hover:border-cinema-highlight/50">
-          <p className="text-xs font-medium mb-2 cinema-text-gradient">Upgrade to SACB Pro</p>
+        <div className="p-3 rounded-lg bg-gradient-to-br from-cinema-purple/20 to-cinema-highlight/20 backdrop-blur-sm border border-cinema-highlight/30">
+          <p className="text-xs font-medium mb-2 text-cinema-highlight">Upgrade to SACB Pro</p>
           <p className="text-xs text-sidebar-foreground/70 mb-3">
             Get advanced AI features and analytics
           </p>

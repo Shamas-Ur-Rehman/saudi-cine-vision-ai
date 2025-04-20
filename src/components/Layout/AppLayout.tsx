@@ -13,7 +13,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-background via-background to-cinema-blue/5">
+    <div className="flex h-screen overflow-hidden bg-background">
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
@@ -34,10 +34,10 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Navbar */}
-        <header className="h-16 flex items-center justify-between px-4 border-b border-cinema-blue/20 bg-card/80 backdrop-blur-sm">
+        <header className="h-16 flex items-center justify-between px-4 border-b border-border bg-card/80 backdrop-blur-sm">
           <div className="flex items-center gap-4">
             <button
-              className="p-2 rounded-md hover:bg-cinema-blue/20 transition-colors md:hidden"
+              className="p-2 rounded-md hover:bg-accent transition-colors md:hidden"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
               {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
@@ -49,7 +49,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                 alt="SACB Logo"
                 className="h-12 w-auto md:block"
               />
-              <h1 className="text-xl font-semibold bg-gradient-to-r from-cinema-blue via-cinema-highlight to-cinema-light-blue bg-clip-text text-transparent">
+              <h1 className="text-xl font-semibold text-foreground">
                 Saudi Cine Brain
               </h1>
             </div>
@@ -58,24 +58,25 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 rounded-full hover:bg-cinema-blue/20 transition-colors"
+              className="p-2 rounded-full hover:bg-accent transition-colors"
+              aria-label="Toggle theme"
             >
               {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
             </button>
 
-            <div className="hidden md:flex items-center gap-2 text-sm px-3 py-1.5 rounded-full bg-cinema-blue/10 text-cinema-blue border border-cinema-blue/20">
+            <div className="hidden md:flex items-center gap-2 text-sm px-3 py-1.5 rounded-full bg-accent text-accent-foreground">
               <span className="h-2 w-2 rounded-full bg-cinema-highlight"></span>
               AI Assistant Active
             </div>
             
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-cinema-blue/20 to-cinema-light-blue/20 border border-cinema-blue/30 flex items-center justify-center text-cinema-blue font-medium transition-transform hover:scale-105">
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-accent to-accent/20 border border-border flex items-center justify-center text-accent-foreground font-medium">
               SC
             </div>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-background via-background to-cinema-blue/5">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-background">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
