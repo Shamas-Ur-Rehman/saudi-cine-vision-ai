@@ -7,14 +7,14 @@ const Sidebar = () => {
   const location = useLocation();
   
   return (
-    <div className="h-full flex flex-col bg-sidebar text-sidebar-foreground">
+    <div className="h-full flex flex-col bg-gradient-to-br from-sidebar via-sidebar to-sidebar/90 text-sidebar-foreground">
       {/* Logo */}
-      <div className="flex items-center justify-center h-16 border-b border-sidebar-border/30">
-        <Link to="/" className="flex items-center gap-3 px-3">
+      <div className="flex items-center justify-center h-16 border-b border-sidebar-border/30 bg-sidebar-accent/10">
+        <Link to="/" className="flex items-center gap-3 px-3 animate-float">
           <img 
             src="/lovable-uploads/4ee004ca-ef74-4593-9461-0696910937a6.png"
             alt="SACB Logo"
-            className="h-8 w-auto"
+            className="h-8 w-auto transition-transform hover:scale-105"
           />
         </Link>
       </div>
@@ -46,12 +46,12 @@ const Sidebar = () => {
 
       {/* Pro Feature Teaser */}
       <div className="p-4">
-        <div className="p-3 rounded-lg bg-sidebar-accent/50 backdrop-blur-sm border border-sidebar-border/50">
-          <p className="text-xs font-medium mb-2">Upgrade to SACB Pro</p>
+        <div className="p-3 rounded-lg bg-gradient-to-br from-cinema-purple/20 to-cinema-highlight/20 backdrop-blur-sm border border-cinema-highlight/30 transition-all duration-300 hover:shadow-lg hover:border-cinema-highlight/50">
+          <p className="text-xs font-medium mb-2 cinema-text-gradient">Upgrade to SACB Pro</p>
           <p className="text-xs text-sidebar-foreground/70 mb-3">
             Get advanced AI features and analytics
           </p>
-          <button className="w-full px-3 py-1.5 text-xs font-medium rounded-md bg-cinema-highlight hover:bg-cinema-highlight/90 text-white transition-colors">
+          <button className="w-full px-3 py-1.5 text-xs font-medium rounded-md bg-gradient-to-r from-cinema-purple to-cinema-highlight hover:from-cinema-purple/90 hover:to-cinema-highlight/90 text-white transition-all duration-300 transform hover:scale-[1.02]">
             Upgrade Now
           </button>
         </div>
