@@ -103,23 +103,23 @@
 
 @layer components {
   .cinema-card {
-    @apply bg-gradient-to-br from-card to-card/80 backdrop-blur-sm border border-border/50 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.01] animate-fade-in;
+    @apply bg-gradient-to-br from-card to-card/80 backdrop-blur-sm border border-cinema-highlight/20 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.01] animate-fade-in hover:border-cinema-highlight/40;
   }
   
   .cinema-glow {
-    @apply shadow-[0_0_15px_rgba(56,189,248,0.5)] border border-cinema-highlight/30 animate-glow;
+    @apply shadow-[0_0_15px_rgba(181,126,220,0.5)] border border-cinema-highlight/30 animate-pulse-glow;
   }
   
   .cinema-text-gradient {
-    @apply bg-gradient-to-r from-cinema-highlight via-cinema-purple to-cinema-rose bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-cinema-highlight via-cinema-purple to-cinema-mauve bg-clip-text text-transparent;
   }
 
   .glass-effect {
-    @apply backdrop-blur-md bg-white/10 border border-white/20;
+    @apply backdrop-blur-md bg-white/10 border border-cinema-highlight/20;
   }
 
   .feature-card {
-    @apply p-6 rounded-xl bg-gradient-to-br from-card to-accent/5 border border-border/50 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] hover:border-cinema-highlight/50;
+    @apply p-6 rounded-xl bg-gradient-to-br from-card to-cinema-highlight/5 border border-cinema-highlight/20 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] hover:border-cinema-highlight/50;
   }
 }
 
@@ -188,4 +188,38 @@
 
 .animate-fade-in {
     animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 20px rgba(181, 126, 220, 0.6);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 30px rgba(181, 126, 220, 0.8);
+  }
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.animate-float-slow {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out;
 }

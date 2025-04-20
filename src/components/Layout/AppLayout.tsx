@@ -11,7 +11,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-background via-background to-accent/5">
+    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-background via-background to-cinema-highlight/5">
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
@@ -32,10 +32,10 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Navbar */}
-        <header className="h-16 flex items-center justify-between px-4 border-b border-border/50 bg-card/80 backdrop-blur-sm">
+        <header className="h-16 flex items-center justify-between px-4 border-b border-cinema-highlight/20 bg-card/80 backdrop-blur-sm">
           <div className="flex items-center gap-4">
             <button
-              className="p-2 rounded-md hover:bg-accent/50 transition-colors md:hidden"
+              className="p-2 rounded-md hover:bg-cinema-highlight/20 transition-colors md:hidden"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
               {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
@@ -45,17 +45,17 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               <img 
                 src="/lovable-uploads/4ee004ca-ef74-4593-9461-0696910937a6.png"
                 alt="SACB Logo"
-                className="h-8 w-auto hidden md:block animate-float"
+                className="h-8 w-auto hidden md:block animate-float-slow"
               />
-              <h1 className="text-xl font-semibold cinema-text-gradient">
+              <h1 className="text-xl font-semibold bg-gradient-to-r from-cinema-highlight via-cinema-purple to-cinema-mauve bg-clip-text text-transparent">
                 Saudi Cine Brain
               </h1>
             </div>
           </div>
           
           <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-2 text-sm px-3 py-1.5 rounded-full bg-cinema-navy/10 text-cinema-teal border border-cinema-teal/20">
-              <span className="h-2 w-2 rounded-full bg-cinema-teal animate-pulse"></span>
+            <div className="hidden md:flex items-center gap-2 text-sm px-3 py-1.5 rounded-full bg-cinema-highlight/10 text-cinema-highlight border border-cinema-highlight/20 animate-pulse-glow">
+              <span className="h-2 w-2 rounded-full bg-cinema-highlight animate-pulse"></span>
               AI Assistant Active
             </div>
             
@@ -66,8 +66,8 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-background to-accent/5">
-          <div className="max-w-7xl mx-auto animate-fade-in">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-background via-background to-cinema-highlight/5">
+          <div className="max-w-7xl mx-auto animate-slide-up">
             {children}
           </div>
         </main>

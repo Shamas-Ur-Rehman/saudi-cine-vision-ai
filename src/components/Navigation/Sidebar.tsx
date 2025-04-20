@@ -7,9 +7,9 @@ const Sidebar = () => {
   const location = useLocation();
   
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-sidebar via-sidebar to-sidebar/90 text-sidebar-foreground">
-      {/* Logo */}
-      <div className="flex items-center justify-center h-16 border-b border-sidebar-border/30 bg-sidebar-accent/10">
+    <div className="h-full flex flex-col bg-gradient-to-br from-sidebar via-sidebar to-cinema-highlight/10 text-sidebar-foreground">
+      {/* Logo Section */}
+      <div className="flex items-center justify-center h-16 border-b border-cinema-highlight/30 bg-cinema-highlight/5">
         <Link to="/" className="flex items-center gap-3 px-3 animate-float">
           <img 
             src="/lovable-uploads/4ee004ca-ef74-4593-9461-0696910937a6.png"
