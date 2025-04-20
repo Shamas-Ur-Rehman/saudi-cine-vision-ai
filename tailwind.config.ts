@@ -63,17 +63,15 @@ export default {
           ring: 'hsl(var(--sidebar-ring))'
         },
         cinema: {
-          'dark-blue': '#0F172A',
-          'teal': '#0D9488',
-          'gold': '#EAB308',
-          'navy': '#172554',
-          'slate': '#334155',
-          'highlight': '#B57EDC',  // Updated to new purple
-          'purple': '#9F56D9',     // Darker purple
+          'dark-blue': '#1a237e',
+          'blue': '#3f51b5',
+          'light-blue': '#7986cb',
+          'highlight': '#536dfe',
+          'purple': '#9F56D9',
           'rose': '#F43F5E',
           'emerald': '#10B981',
-          'lavender': '#E5DEFF',   // Light purple
-          'mauve': '#D6BCFA'       // Medium purple
+          'lavender': '#E5DEFF',
+          'mauve': '#D6BCFA'
         }
       },
       animation: {
