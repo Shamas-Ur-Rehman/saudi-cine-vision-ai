@@ -33,6 +33,7 @@ export const useChat = () => {
         },
         (payload) => {
           const newMessage = payload.new as ChatMessageResponse;
+          console.log("New message from subscription:", newMessage);
           setMessages(prev => [...prev, {
             id: newMessage.id,
             text: newMessage.text,
@@ -77,6 +78,8 @@ export const useChat = () => {
   };
 
   const sendMessage = async (text: string) => {
+    if (!text.trim()) return;
+    
     setIsLoading(true);
     
     // Add user message to UI immediately
@@ -107,14 +110,40 @@ export const useChat = () => {
       if (!response.ok) {
         const errorData = await response.text();
         console.error('API response error:', errorData);
-        throw new Error('Failed to send message');
+        throw new Error(`Failed to send message: ${errorData}`);
       }
 
-      // The bot message will be added through the subscription
       const data = await response.json();
       console.log('Edge function response:', data);
+      
+      // If we don't see the bot message added by the subscription within a reasonable time,
+      // add it manually to ensure user sees a response
+      setTimeout(() => {
+        const botMessageExists = messages.some(
+          msg => msg.sender === 'bot' && msg.text === data.response
+        );
+        
+        if (!botMessageExists && data.response) {
+          const botMessage: Message = {
+            id: uuidv4(),
+            text: data.response,
+            sender: 'bot',
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, botMessage]);
+        }
+      }, 2000);
+      
     } catch (error) {
       console.error('Error sending message:', error);
+      // Add error message to chat
+      const errorMessage: Message = {
+        id: uuidv4(),
+        text: "Sorry, I couldn't process your request. Please try again.",
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }

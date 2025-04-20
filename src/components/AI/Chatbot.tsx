@@ -47,6 +47,15 @@ const Chatbot = () => {
       </div>
       
       <div className="flex-grow overflow-auto p-3 space-y-3">
+        {messages.length === 0 && (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center text-muted-foreground">
+              <Bot size={40} className="mx-auto mb-2 opacity-50" />
+              <p>No messages yet. Start a conversation!</p>
+            </div>
+          </div>
+        )}
+        
         {messages.map((message) => (
           <div 
             key={message.id}
