@@ -9,12 +9,12 @@ const Sidebar = () => {
   return (
     <div className="h-full flex flex-col bg-sidebar text-sidebar-foreground">
       {/* Logo Section - Made bigger */}
-      <div className="flex items-center justify-center h-20 border-b border-sidebar-border bg-sidebar-accent/5">
+      <div className="flex items-center justify-center h-24 border-b border-sidebar-border bg-sidebar-accent/5">
         <Link to="/" className="flex items-center gap-3 px-3">
           <img 
             src="/lovable-uploads/4ee004ca-ef74-4593-9461-0696910937a6.png"
             alt="SACB Logo"
-            className="h-12 w-auto transition-transform"
+            className="h-16 w-auto"
           />
         </Link>
       </div>
@@ -22,7 +22,7 @@ const Sidebar = () => {
       {/* Navigation Links */}
       <nav className="flex-1 py-4 overflow-y-auto scrollbar-none">
         <div className="px-3 pb-2">
-          <h3 className="text-xs font-medium text-sidebar-foreground/60 tracking-wider uppercase">
+          <h3 className="text-xs font-medium text-sidebar-foreground/80 tracking-wider uppercase">
             Main
           </h3>
         </div>
@@ -35,7 +35,7 @@ const Sidebar = () => {
         <NavItem to="/ai-assistant" icon={<MessageSquare size={18} />} label="AI Assistant" active={location.pathname === '/ai-assistant'} />
         
         <div className="px-3 py-2 mt-4">
-          <h3 className="text-xs font-medium text-sidebar-foreground/60 tracking-wider uppercase">
+          <h3 className="text-xs font-medium text-sidebar-foreground/80 tracking-wider uppercase">
             Reports
           </h3>
         </div>
@@ -46,12 +46,12 @@ const Sidebar = () => {
 
       {/* Pro Feature Teaser */}
       <div className="p-4">
-        <div className="p-3 rounded-lg bg-gradient-to-br from-cinema-purple/20 to-cinema-highlight/20 backdrop-blur-sm border border-cinema-highlight/30">
-          <p className="text-xs font-medium mb-2 text-cinema-highlight">Upgrade to SACB Pro</p>
+        <div className="p-3 rounded-lg bg-sidebar-accent/20 backdrop-blur-sm border border-sidebar-border/30">
+          <p className="text-xs font-medium mb-2 text-white">Upgrade to SACB Pro</p>
           <p className="text-xs text-sidebar-foreground/70 mb-3">
             Get advanced AI features and analytics
           </p>
-          <button className="w-full px-3 py-1.5 text-xs font-medium rounded-md bg-gradient-to-r from-cinema-purple to-cinema-highlight hover:from-cinema-purple/90 hover:to-cinema-highlight/90 text-white transition-all duration-300 transform hover:scale-[1.02]">
+          <button className="w-full px-3 py-1.5 text-xs font-medium rounded-md bg-white text-sidebar-accent hover:bg-white/90 transition-all duration-300 transform hover:scale-[1.02]">
             Upgrade Now
           </button>
         </div>
@@ -73,14 +73,14 @@ const NavItem = ({ to, icon, label, active }: NavItemProps) => {
       to={to}
       className={`flex items-center gap-3 px-3 py-2 mx-2 rounded-md transition-colors ${
         active
-          ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-          : 'text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent/50'
+          ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
+          : 'text-sidebar-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/50'
       }`}
     >
-      <span className="text-sidebar-foreground/70">{icon}</span>
-      <span className="text-sm font-medium">{label}</span>
+      <span className="text-sidebar-foreground/90">{icon}</span>
+      <span className="text-sm">{label}</span>
       {active && (
-        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-cinema-highlight"></span>
+        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-white"></span>
       )}
     </Link>
   );

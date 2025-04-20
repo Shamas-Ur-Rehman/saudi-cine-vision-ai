@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../Navigation/Sidebar';
 import { Menu, X, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
@@ -10,7 +10,17 @@ interface AppLayoutProps {
 
 const AppLayout = ({ children }: AppLayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+  
+  // This useEffect ensures hydration is complete before rendering theme toggle
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -56,20 +66,22 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           </div>
           
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 rounded-full hover:bg-accent transition-colors"
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
+            {mounted && (
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-full hover:bg-accent transition-colors"
+                aria-label="Toggle theme"
+              >
+                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+              </button>
+            )}
 
             <div className="hidden md:flex items-center gap-2 text-sm px-3 py-1.5 rounded-full bg-accent text-accent-foreground">
-              <span className="h-2 w-2 rounded-full bg-cinema-highlight"></span>
+              <span className="h-2 w-2 rounded-full bg-primary"></span>
               AI Assistant Active
             </div>
             
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-accent to-accent/20 border border-border flex items-center justify-center text-accent-foreground font-medium">
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary/80 to-primary/20 border border-border flex items-center justify-center text-primary-foreground font-medium">
               SC
             </div>
           </div>
