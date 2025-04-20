@@ -1,33 +1,38 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Home, Film, Users, Calendar, MessageSquare, Settings, BarChart, FileText } from 'lucide-react';
 
 const Sidebar = () => {
+  const location = useLocation();
+  
   return (
     <div className="h-full flex flex-col bg-sidebar text-sidebar-foreground">
       {/* Logo */}
       <div className="flex items-center justify-center h-16 border-b border-sidebar-border/30">
-        <Link to="/" className="flex items-center gap-2">
-          <Film className="h-6 w-6 text-cinema-highlight" />
-          <span className="font-bold text-lg">SACB</span>
+        <Link to="/" className="flex items-center gap-3 px-3">
+          <img 
+            src="/lovable-uploads/4ee004ca-ef74-4593-9461-0696910937a6.png"
+            alt="SACB Logo"
+            className="h-8 w-auto"
+          />
         </Link>
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 py-4">
+      <nav className="flex-1 py-4 overflow-y-auto scrollbar-none">
         <div className="px-3 pb-2">
           <h3 className="text-xs font-medium text-sidebar-foreground/60 tracking-wider uppercase">
             Main
           </h3>
         </div>
         
-        <NavItem to="/" icon={<Home size={18} />} label="Dashboard" active />
-        <NavItem to="/visualization" icon={<Film size={18} />} label="Scene Visualization" />
-        <NavItem to="/scripts" icon={<FileText size={18} />} label="Scripts" />
-        <NavItem to="/schedule" icon={<Calendar size={18} />} label="Schedule" />
-        <NavItem to="/crew" icon={<Users size={18} />} label="Crew" />
-        <NavItem to="/ai-assistant" icon={<MessageSquare size={18} />} label="AI Assistant" />
+        <NavItem to="/" icon={<Home size={18} />} label="Dashboard" active={location.pathname === '/'} />
+        <NavItem to="/visualization" icon={<Film size={18} />} label="Scene Visualization" active={location.pathname === '/visualization'} />
+        <NavItem to="/scripts" icon={<FileText size={18} />} label="Scripts" active={location.pathname === '/scripts'} />
+        <NavItem to="/schedule" icon={<Calendar size={18} />} label="Schedule" active={location.pathname === '/schedule'} />
+        <NavItem to="/crew" icon={<Users size={18} />} label="Crew" active={location.pathname === '/crew'} />
+        <NavItem to="/ai-assistant" icon={<MessageSquare size={18} />} label="AI Assistant" active={location.pathname === '/ai-assistant'} />
         
         <div className="px-3 py-2 mt-4">
           <h3 className="text-xs font-medium text-sidebar-foreground/60 tracking-wider uppercase">
@@ -35,8 +40,8 @@ const Sidebar = () => {
           </h3>
         </div>
         
-        <NavItem to="/analytics" icon={<BarChart size={18} />} label="Analytics" />
-        <NavItem to="/settings" icon={<Settings size={18} />} label="Settings" />
+        <NavItem to="/analytics" icon={<BarChart size={18} />} label="Analytics" active={location.pathname === '/analytics'} />
+        <NavItem to="/settings" icon={<Settings size={18} />} label="Settings" active={location.pathname === '/settings'} />
       </nav>
 
       {/* Pro Feature Teaser */}
@@ -46,7 +51,7 @@ const Sidebar = () => {
           <p className="text-xs text-sidebar-foreground/70 mb-3">
             Get advanced AI features and analytics
           </p>
-          <button className="w-full px-3 py-1.5 text-xs font-medium rounded-md bg-cinema-highlight/80 text-white hover:bg-cinema-highlight transition">
+          <button className="w-full px-3 py-1.5 text-xs font-medium rounded-md bg-cinema-highlight hover:bg-cinema-highlight/90 text-white transition-colors">
             Upgrade Now
           </button>
         </div>

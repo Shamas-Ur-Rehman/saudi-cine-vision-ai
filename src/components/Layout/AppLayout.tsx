@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Sidebar from '../Navigation/Sidebar';
 import { Menu, X } from 'lucide-react';
@@ -7,10 +8,18 @@ interface AppLayoutProps {
 }
 
 const AppLayout = ({ children }: AppLayoutProps) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <div 
         className={`${
@@ -24,16 +33,25 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Navbar */}
         <header className="h-16 flex items-center justify-between px-4 border-b border-border/50 bg-card/80 backdrop-blur-sm">
-          <button
-            className="p-2 rounded-md md:hidden"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          >
-            {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-          
-          <h1 className="text-xl font-semibold cinema-text-gradient hidden md:block">
-            Saudi Cine Brain
-          </h1>
+          <div className="flex items-center gap-4">
+            <button
+              className="p-2 rounded-md hover:bg-accent/50 md:hidden"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            >
+              {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+            
+            <div className="flex items-center gap-3">
+              <img 
+                src="/lovable-uploads/4ee004ca-ef74-4593-9461-0696910937a6.png"
+                alt="SACB Logo"
+                className="h-8 w-auto hidden md:block"
+              />
+              <h1 className="text-xl font-semibold cinema-text-gradient">
+                Saudi Cine Brain
+              </h1>
+            </div>
+          </div>
           
           <div className="flex items-center gap-3">
             <div className="hidden md:flex items-center gap-2 text-sm px-3 py-1.5 rounded-full bg-cinema-navy/10 text-cinema-teal border border-cinema-teal/20">
@@ -48,8 +66,10 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          {children}
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-background to-accent/5">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </div>
