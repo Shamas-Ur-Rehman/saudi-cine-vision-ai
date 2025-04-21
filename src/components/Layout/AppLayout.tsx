@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Sidebar from '../Navigation/Sidebar';
 import { Menu, X, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
@@ -10,20 +10,10 @@ interface AppLayoutProps {
 
 const AppLayout = ({ children }: AppLayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
-  
-  // This useEffect ensures hydration is complete before rendering theme toggle
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-background via-background to-cinema-blue/5">
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
@@ -44,10 +34,10 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Navbar */}
-        <header className="h-16 flex items-center justify-between px-4 border-b border-border bg-card/80 backdrop-blur-sm">
+        <header className="h-16 flex items-center justify-between px-4 border-b border-cinema-blue/20 bg-card/80 backdrop-blur-sm">
           <div className="flex items-center gap-4">
             <button
-              className="p-2 rounded-md hover:bg-accent transition-colors md:hidden"
+              className="p-2 rounded-md hover:bg-cinema-blue/20 transition-colors md:hidden"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
               {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
@@ -59,36 +49,33 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                 alt="SACB Logo"
                 className="h-12 w-auto md:block"
               />
-              <h1 className="text-xl font-semibold text-foreground">
+              <h1 className="text-xl font-semibold bg-gradient-to-r from-cinema-blue via-cinema-highlight to-cinema-light-blue bg-clip-text text-transparent">
                 Saudi Cine Brain
               </h1>
             </div>
           </div>
           
           <div className="flex items-center gap-4">
-            {mounted && (
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-full hover:bg-accent transition-colors"
-                aria-label="Toggle theme"
-              >
-                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-              </button>
-            )}
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="p-2 rounded-full hover:bg-cinema-blue/20 transition-colors"
+            >
+              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
 
-            <div className="hidden md:flex items-center gap-2 text-sm px-3 py-1.5 rounded-full bg-accent text-accent-foreground">
-              <span className="h-2 w-2 rounded-full bg-primary"></span>
+            <div className="hidden md:flex items-center gap-2 text-sm px-3 py-1.5 rounded-full bg-cinema-blue/10 text-cinema-blue border border-cinema-blue/20">
+              <span className="h-2 w-2 rounded-full bg-cinema-highlight"></span>
               AI Assistant Active
             </div>
             
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary/80 to-primary/20 border border-border flex items-center justify-center text-primary-foreground font-medium">
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-cinema-blue/20 to-cinema-light-blue/20 border border-cinema-blue/30 flex items-center justify-center text-cinema-blue font-medium transition-transform hover:scale-105">
               SC
             </div>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-background">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-background via-background to-cinema-blue/5">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
