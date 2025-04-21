@@ -1,10 +1,6 @@
+
 import React, { useState } from 'react';
 import { Camera, Loader, RefreshCw, Upload } from 'lucide-react';
-
-const panelLight = "bg-white";
-const panelDark = "bg-[#191b2e]";
-const border = "border border-[#292B4B]";
-const cardShadow = "shadow-[0_2px_24px_0_rgba(16,33,84,0.05)]";
 
 const SceneVisualizer = () => {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -21,15 +17,15 @@ const SceneVisualizer = () => {
     }, 2000);
   };
 
-  // Use theme from Tailwind
   return (
-    <div className={`rounded-xl ${border} ${cardShadow} h-full flex flex-col ${panelLight} dark:${panelDark} transition-colors duration-100`}>
-      <div className="p-6 border-b border-[#292B4B]">
-        <h3 className="font-extrabold text-lg text-[#212442] dark:text-white">AI Scene Visualization</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-300">Create and visualize your scenes with AI</p>
+    <div className="cinema-card h-full flex flex-col">
+      <div className="p-4 border-b border-border/50">
+        <h3 className="font-semibold">AI Scene Visualization</h3>
+        <p className="text-sm text-muted-foreground">Create and visualize your scenes with AI</p>
       </div>
-      <div className="p-6 flex-grow flex flex-col h-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+      
+      <div className="p-4 flex-grow flex flex-col h-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
           {/* Input Panel */}
           <div className="flex flex-col h-full">
             <div className="mb-4">
@@ -99,7 +95,7 @@ const SceneVisualizer = () => {
           
           {/* Preview Panel */}
           <div className="flex flex-col h-full">
-            <div className={`rounded-md flex-grow flex flex-col items-center justify-center ${border} ${panelLight} dark:${panelDark} bg-opacity-80 overflow-hidden`}>
+            <div className="border border-dashed border-border rounded-md flex-grow flex flex-col items-center justify-center bg-card/50 overflow-hidden">
               {generatedImage ? (
                 <div className="relative w-full h-full">
                   <img 

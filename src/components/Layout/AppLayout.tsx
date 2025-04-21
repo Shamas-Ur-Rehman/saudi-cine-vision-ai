@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Sidebar from '../Navigation/Sidebar';
 import { Menu, X, Moon, Sun } from 'lucide-react';
@@ -7,74 +8,74 @@ interface AppLayoutProps {
   children: React.ReactNode;
 }
 
-const sidebarBgLight = "bg-[#212442]"; // deep purple/blue from screenshot
-const sidebarBgDark = "bg-[#181826]"; // dark version for night
-const mainBgLight = "bg-[#F4F8FB]"; // light background from screenshot
-const mainBgDark = "bg-[#0f1122]"; // dark main/background from screenshot
-
 const AppLayout = ({ children }: AppLayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
-  // Make topbar stick and ensure background uses your color
   return (
-    <div className={`flex h-screen overflow-hidden ${theme === "dark" ? mainBgDark : mainBgLight} transition-colors duration-150`}>
+    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-background via-background to-cinema-blue/5">
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className={`
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        fixed inset-y-0 left-0 z-50 w-72 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0
-        ${theme === "dark" ? sidebarBgDark : sidebarBgLight} border-r border-[#292B4B]
-      `}>
-        <div className="flex flex-col h-full justify-between">
-          {/* Sidebar Logo (BIG, no animation) */}
-          <div className="pt-10 pb-4 flex flex-col items-center">
-            <img
-              src="/lovable-uploads/4ee004ca-ef74-4593-9461-0696910937a6.png"
-              alt="SACB Logo"
-              className="h-24 w-auto" // Bigger logo
-              style={{ filter: theme === "dark" ? "brightness(1.2)" : undefined }}
-            />
-            <h1 className="mt-3 text-2xl font-bold text-white tracking-wider">Saudi Cine Brain</h1>
-          </div>
-          {/* Sidebar content (menu) */}
-          <Sidebar />
-          <div className="mb-5" />
-        </div>
+      <div 
+        className={`${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0`}
+      >
+        <Sidebar />
       </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Navbar */}
-        <header className={`h-16 flex items-center justify-between px-6 border-b border-[#292B4B] ${theme === "dark" ? "bg-[#181826]" : "bg-[#212442]"} transition-colors`}>
+        <header className="h-16 flex items-center justify-between px-4 border-b border-cinema-blue/20 bg-card/80 backdrop-blur-sm">
           <div className="flex items-center gap-4">
             <button
-              className="p-2 rounded-md hover:bg-[#292B4B] text-white transition-colors md:hidden"
+              className="p-2 rounded-md hover:bg-cinema-blue/20 transition-colors md:hidden"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             >
-              {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+              {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
-            <div className="hidden md:flex items-center gap-3">
-              {/* No logo in topbar, only in sidebar */}
-              <h1 className="text-2xl font-extrabold text-white tracking-wider">
+            
+            <div className="flex items-center gap-3">
+              <img 
+                src="/lovable-uploads/4ee004ca-ef74-4593-9461-0696910937a6.png"
+                alt="SACB Logo"
+                className="h-12 w-auto md:block"
+              />
+              <h1 className="text-xl font-semibold bg-gradient-to-r from-cinema-blue via-cinema-highlight to-cinema-light-blue bg-clip-text text-transparent">
                 Saudi Cine Brain
               </h1>
             </div>
           </div>
-          <div className="flex items-center gap-6">
+          
+          <div className="flex items-center gap-4">
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 rounded-full hover:bg-[#292B4B] text-white transition-colors"
-              aria-label="Toggle dark mode"
+              className="p-2 rounded-full hover:bg-cinema-blue/20 transition-colors"
             >
-              {theme === 'dark' ? <Sun size={22} /> : <Moon size={22} />}
+              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
             </button>
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#0A8ED8] to-[#64E6FB] border border-[#292B4B] flex items-center justify-center text-[#0A8ED8] font-extrabold text-xl">
+
+            <div className="hidden md:flex items-center gap-2 text-sm px-3 py-1.5 rounded-full bg-cinema-blue/10 text-cinema-blue border border-cinema-blue/20">
+              <span className="h-2 w-2 rounded-full bg-cinema-highlight"></span>
+              AI Assistant Active
+            </div>
+            
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-cinema-blue/20 to-cinema-light-blue/20 border border-cinema-blue/30 flex items-center justify-center text-cinema-blue font-medium transition-transform hover:scale-105">
               SC
             </div>
           </div>
         </header>
+
         {/* Page Content */}
-        <main className={`flex-1 overflow-y-auto p-0 md:p-10 ${theme === "dark" ? mainBgDark : mainBgLight} min-h-0`}>
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gradient-to-br from-background via-background to-cinema-blue/5">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
