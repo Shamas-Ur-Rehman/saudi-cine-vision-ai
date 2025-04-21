@@ -30,6 +30,129 @@ export type Database = {
         }
         Relationships: []
       }
+      crew_members: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          role: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          role: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          role?: string
+        }
+        Relationships: []
+      }
+      generated_scenes: {
+        Row: {
+          created_at: string | null
+          id: string
+          image_url: string | null
+          lighting: string
+          mood: string
+          scene_description: string
+          style: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          lighting: string
+          mood: string
+          scene_description: string
+          style: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          lighting?: string
+          mood?: string
+          scene_description?: string
+          style?: string
+        }
+        Relationships: []
+      }
+      scene_crew: {
+        Row: {
+          crew_id: string
+          id: string
+          scene_id: string
+        }
+        Insert: {
+          crew_id: string
+          id?: string
+          scene_id: string
+        }
+        Update: {
+          crew_id?: string
+          id?: string
+          scene_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scene_crew_crew_id_fkey"
+            columns: ["crew_id"]
+            isOneToOne: false
+            referencedRelation: "crew_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scene_crew_scene_id_fkey"
+            columns: ["scene_id"]
+            isOneToOne: false
+            referencedRelation: "scenes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scenes: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          end_time: string
+          id: string
+          location: string
+          participants: number
+          priority: string
+          start_time: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          end_time: string
+          id?: string
+          location: string
+          participants?: number
+          priority: string
+          start_time: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          end_time?: string
+          id?: string
+          location?: string
+          participants?: number
+          priority?: string
+          start_time?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
