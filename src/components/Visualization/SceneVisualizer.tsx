@@ -2,19 +2,76 @@
 import React, { useState } from 'react';
 import { Camera, Loader, RefreshCw, Upload } from 'lucide-react';
 
+const OPENAI_IMAGE_API_KEY = "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";
+
 const SceneVisualizer = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleGenerate = () => {
+  // State for UI controls
+  const [sceneDescription, setSceneDescription] = useState(
+    "A dramatic low-angle shot of the protagonist walking through an old market at dusk. Soft golden lighting filters through the market stalls, creating long shadows. The camera slowly tracks backward as the character moves forward with determination."
+  );
+  const [style, setStyle] = useState('cinematic');
+  const [mood, setMood] = useState('dramatic');
+  const [lighting, setLighting] = useState('golden-hour');
+
+  const handleGenerate = async () => {
     setIsGenerating(true);
-    
-    // Mock AI generation - in a real app this would call an AI API
-    setTimeout(() => {
-      // Sample image URL - in production this would be the result from the AI service
-      setGeneratedImage('/placeholder.svg');
+    setError(null);
+
+    const styleMap: Record<string, string> = {
+      cinematic: "cinematic style",
+      documentary: "documentary style",
+      artistic: "artistic style",
+      realistic: "realistic style",
+    };
+    const moodMap: Record<string, string> = {
+      dramatic: "dramatic mood",
+      suspenseful: "suspenseful mood",
+      peaceful: "peaceful mood",
+      tense: "tense mood",
+    };
+    const lightingMap: Record<string, string> = {
+      "golden-hour": "golden hour lighting",
+      "low-key": "low-key lighting",
+      "high-key": "high-key lighting",
+      "natural": "natural lighting"
+    };
+
+    const fullPrompt = [
+      sceneDescription,
+      styleMap[style],
+      moodMap[mood],
+      lightingMap[lighting],
+    ].filter(Boolean).join(", ");
+
+    try {
+      const response = await fetch("https://api.openai.com/v1/images/generations", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${OPENAI_IMAGE_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "dall-e-3",
+          prompt: fullPrompt,
+          n: 1,
+          size: "1024x1024"
+        }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || "Image generation failed");
+      }
+      const data = await response.json();
+      setGeneratedImage(data.data[0].url);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
       setIsGenerating(false);
-    }, 2000);
+    }
   };
 
   return (
@@ -33,13 +90,14 @@ const SceneVisualizer = () => {
               <textarea 
                 className="w-full h-40 rounded-md border border-input bg-transparent px-3 py-2 text-sm"
                 placeholder="Describe your scene in detail (setting, mood, lighting, camera angle, etc.)"
-                defaultValue="A dramatic low-angle shot of the protagonist walking through an old market at dusk. Soft golden lighting filters through the market stalls, creating long shadows. The camera slowly tracks backward as the character moves forward with determination."
+                value={sceneDescription}
+                onChange={e => setSceneDescription(e.target.value)}
               ></textarea>
             </div>
             
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1">Style</label>
-              <select className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm">
+              <select className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm" value={style} onChange={e => setStyle(e.target.value)}>
                 <option value="cinematic">Cinematic</option>
                 <option value="documentary">Documentary</option>
                 <option value="artistic">Artistic</option>
@@ -50,7 +108,7 @@ const SceneVisualizer = () => {
             <div className="mb-4 grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Mood</label>
-                <select className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm">
+                <select className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm" value={mood} onChange={e => setMood(e.target.value)}>
                   <option value="dramatic">Dramatic</option>
                   <option value="suspenseful">Suspenseful</option>
                   <option value="peaceful">Peaceful</option>
@@ -59,7 +117,7 @@ const SceneVisualizer = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Lighting</label>
-                <select className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm">
+                <select className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm" value={lighting} onChange={e => setLighting(e.target.value)}>
                   <option value="golden-hour">Golden Hour</option>
                   <option value="low-key">Low Key</option>
                   <option value="high-key">High Key</option>
@@ -91,6 +149,11 @@ const SceneVisualizer = () => {
                 )}
               </button>
             </div>
+            {error && (
+              <div className="mt-3 text-sm text-red-500 bg-red-100 rounded p-2">
+                {error}
+              </div>
+            )}
           </div>
           
           {/* Preview Panel */}

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Calendar as CalendarIcon, Clock, MapPin, Users, AlertCircle, ChevronRight } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -11,13 +10,13 @@ const Scheduler = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [viewMode, setViewMode] = useState<'today' | 'tomorrow' | 'week'>('today');
   
-  // Mock schedule data
+  // Updated mock schedule data with requested locations
   const allScheduleItems = [
     {
       id: 1,
       title: 'Desert Chase Scene Filming',
       time: '10:30 AM - 2:00 PM',
-      location: 'Al Qudra Desert',
+      location: 'Riyadh',
       participants: 12,
       priority: 'High',
       date: new Date(),
@@ -26,7 +25,7 @@ const Scheduler = () => {
       id: 2,
       title: 'Market Scene Setup',
       time: '8:00 AM - 10:00 AM',
-      location: 'Old Dubai Market Set',
+      location: 'Al-Khobar',
       participants: 8,
       priority: 'Medium',
       date: new Date(),
@@ -35,7 +34,7 @@ const Scheduler = () => {
       id: 3,
       title: 'Actor Rehearsal - Palace Scene',
       time: '3:30 PM - 5:30 PM',
-      location: 'Studio B',
+      location: 'Jeddah',
       participants: 5,
       priority: 'Medium',
       date: new Date(),
@@ -44,7 +43,7 @@ const Scheduler = () => {
       id: 4,
       title: 'Script Review Meeting',
       time: '9:00 AM - 10:30 AM',
-      location: 'Conference Room',
+      location: 'Riyadh',
       participants: 6,
       priority: 'Normal',
       date: addDays(new Date(), 1),
@@ -53,7 +52,7 @@ const Scheduler = () => {
       id: 5,
       title: 'Final Scene Filming',
       time: '11:00 AM - 5:00 PM',
-      location: 'Dubai Marina',
+      location: 'Jeddah',
       participants: 15,
       priority: 'High',
       date: addDays(new Date(), 1),
@@ -62,7 +61,7 @@ const Scheduler = () => {
       id: 6,
       title: 'Weekly Production Meeting',
       time: '2:00 PM - 3:30 PM',
-      location: 'Main Office',
+      location: 'Al-Khobar',
       participants: 10,
       priority: 'Medium',
       date: addDays(new Date(), 2),
@@ -71,7 +70,7 @@ const Scheduler = () => {
       id: 7,
       title: 'Location Scouting',
       time: '9:00 AM - 1:00 PM',
-      location: 'Various Locations',
+      location: 'Riyadh',
       participants: 4,
       priority: 'Normal',
       date: addDays(new Date(), 3),
