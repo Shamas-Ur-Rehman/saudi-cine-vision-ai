@@ -1,8 +1,9 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Camera, Loader, RefreshCw, Upload } from 'lucide-react';
 
-const OPENAI_IMAGE_API_KEY = "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";
+const OPENAI_IMAGE_API_KEY = "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";
+
+import { supabase } from '@/integrations/supabase/client';
 
 const SceneVisualizer = () => {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -16,6 +17,20 @@ const SceneVisualizer = () => {
   const [style, setStyle] = useState('cinematic');
   const [mood, setMood] = useState('dramatic');
   const [lighting, setLighting] = useState('golden-hour');
+  const [recentScenes, setRecentScenes] = useState<any[]>([]);
+  
+  // Fetch recent generated scenes from Supabase
+  useEffect(() => {
+    async function fetchRecentScenes() {
+      const { data } = await supabase
+        .from('generated_scenes')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(3);
+      setRecentScenes(data || []);
+    }
+    fetchRecentScenes();
+  }, []);
 
   const handleGenerate = async () => {
     setIsGenerating(true);
@@ -66,7 +81,27 @@ const SceneVisualizer = () => {
         throw new Error(errorData.error?.message || "Image generation failed");
       }
       const data = await response.json();
-      setGeneratedImage(data.data[0].url);
+      const imageUrl = data.data[0].url;
+
+      setGeneratedImage(imageUrl);
+
+      // Save generated scene to Supabase
+      await supabase.from('generated_scenes').insert([
+        {
+          scene_description: sceneDescription,
+          style,
+          mood,
+          lighting,
+          image_url: imageUrl,
+        }
+      ]);
+      // Refetch recent scenes
+      const { data: refetched } = await supabase
+        .from('generated_scenes')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(3);
+      setRecentScenes(refetched || []);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -188,7 +223,28 @@ const SceneVisualizer = () => {
                 </div>
               )}
             </div>
-            
+            {/* Recent generated scenes */}
+            {recentScenes.length > 0 && (
+              <div className="mt-4">
+                <h4 className="font-medium text-sm mb-2">Recent Visualized Scenes</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {recentScenes.map(scene => (
+                    <div key={scene.id} className="rounded border p-2 bg-card/70">
+                      <div className="aspect-square rounded overflow-hidden mb-1 bg-muted">
+                        {scene.image_url ? (
+                          <img src={scene.image_url} alt={scene.scene_description} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="h-full flex items-center justify-center text-xs text-muted-foreground">No Image</div>
+                        )}
+                      </div>
+                      <div className="text-xs truncate">{scene.scene_description}</div>
+                      <div className="text-[10px] text-muted-foreground mt-1">{scene.style}, {scene.mood}, {scene.lighting}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {/* ... existing AI-powered scene analysis ... */}
             {generatedImage && (
               <div className="mt-4">
                 <div className="flex justify-between items-center mb-2">
