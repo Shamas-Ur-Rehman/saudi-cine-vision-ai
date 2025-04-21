@@ -45,17 +45,7 @@ const Sidebar = () => {
       </nav>
 
       {/* Pro Feature Teaser */}
-      <div className="p-4">
-        <div className="p-3 rounded-lg bg-gradient-to-br from-cinema-purple/20 to-cinema-highlight/20 backdrop-blur-sm border border-cinema-highlight/30 transition-all duration-300 hover:shadow-lg hover:border-cinema-highlight/50">
-          <p className="text-xs font-medium mb-2 cinema-text-gradient">Upgrade to SACB Pro</p>
-          <p className="text-xs text-sidebar-foreground/70 mb-3">
-            Get advanced AI features and analytics
-          </p>
-          <button className="w-full px-3 py-1.5 text-xs font-medium rounded-md bg-gradient-to-r from-cinema-purple to-cinema-highlight hover:from-cinema-purple/90 hover:to-cinema-highlight/90 text-white transition-all duration-300 transform hover:scale-[1.02]">
-            Upgrade Now
-          </button>
-        </div>
-      </div>
+      {/* Removed Upgrade to SACB Pro section as requested */}
     </div>
   );
 };
@@ -87,3 +77,4 @@ const NavItem = ({ to, icon, label, active }: NavItemProps) => {
 };
 
 export default Sidebar;
+
